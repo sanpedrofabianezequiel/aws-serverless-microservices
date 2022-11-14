@@ -1,4 +1,4 @@
-*.js
+#*.js
 !jest.config.js
 *.d.ts
 node_modules
@@ -8,3 +8,4 @@ node_modules
 cdk.out
 src/basket/node_modules
 src/product/node_modules
+src/ordering/node_modules
