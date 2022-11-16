@@ -1,11 +1,13 @@
 import { EventBus, Rule } from "aws-cdk-lib/aws-events";
-import { LambdaFunction } from "aws-cdk-lib/aws-events-targets";
+import { SqsQueue } from "aws-cdk-lib/aws-events-targets";
 import { IFunction } from "aws-cdk-lib/aws-lambda";
+import { IQueue } from "aws-cdk-lib/aws-sqs";
 import { Construct } from "constructs";
 
 interface SwnEventBusProps {
   publisherFunction: IFunction;
-  targetFunction: IFunction;
+  targetFunction?: IFunction;
+  targetQueue: IQueue;
 }
 
 export class SwnEventBus extends Construct {
@@ -25,8 +27,13 @@ export class SwnEventBus extends Construct {
         detailType: ["CheckoutBasket"],
       },
     });
+    // Target Lambda
+    //checkoutBasketRule.addTarget(new LambdaFunction(props.targetFunction));
+    
 
-    checkoutBasketRule.addTarget(new LambdaFunction(props.targetFunction));
+    //We need to pass the target to Ordering Lambda service with the event bus
+    checkoutBasketRule.addTarget(new SqsQueue(props.targetQueue));
+    
     bus.grantPutEventsTo(props.publisherFunction);//Posible error AccessDeniedException: User: arn:aws:sts::xxxxxxxxxxxx:assumed-role/AwsMicroservicesStack-ApiGatewayServiceRole-1QXZQZQXZQZQZ/xxxxxxxxxxxx is not authorized to perform: events:PutEvents on resource: arn:aws:events:eu-west-1:xxxxxxxxxxxx:event-bus/default
     
   }

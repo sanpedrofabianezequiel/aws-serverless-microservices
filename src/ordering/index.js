@@ -5,10 +5,12 @@ import { ddbClient } from "../basket/ddbClient";
 exports.handler = async function (event) {
   console.log("Received event:", JSON.stringify(event, null, 2));
 
-  const eventType = event["detail-type"];
-  if (eventType !== undefined) {
+  if (event.Records != null) {
+    await sqsInvocation(event);
+  } else if (event["detail-type"] !== undefined) {
     await eventBridgeInvocation(event);
   } else {
+    //Api gateway Invocation --return sync response
     return await apiGatewayInvocation(event);
   }
 };
@@ -104,4 +106,12 @@ const getAllOrders = async () => {
     console.log(error);
     throw error;
   }
+};
+const sqsInvocation = async (event) => {
+  console.log("Received event from SQS:", JSON.stringify(event, null, 2));
+  event.Records.forEach(async (record) => {
+    console.log("SQS record:", JSON.stringify(record, null, 2));
+    const basketCheckoutEvent = JSON.parse(record.body);
+    await createOrder(basketCheckoutEvent.detail);
+  });
 };
