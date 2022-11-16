@@ -13,6 +13,13 @@ The `cdk.json` file tells the CDK Toolkit how to execute your app.
 * `cdk diff`        compare deployed stack with current state
 * `cdk synth`       emits the synthesized CloudFormation template
 
+```
+cdk init app --language typescript
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-files.html
+```
+
+
 
 # CLI
 ```
